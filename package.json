@@ -1,0 +1,8 @@
+{
+  "name": "dex-price-cardano",
+  "type": "module",
+  "dependencies": {
+    "@minswap/sdk": "^0.2.2-beta",
+    "googleapis": "^127.0.0"
+  }
+}
