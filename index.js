@@ -2,7 +2,8 @@ import { BlockFrostAPI } from "@blockfrost/blockfrost-js";
 import { BlockfrostAdapter } from "@minswap/sdk";
 import { google } from 'googleapis';
 import credentials from './secrets/golden-record-401410-fcfd88cbb372.json' assert { type: 'json' };
-import "dotenv/config.js";
+import dotenv from "dotenv";
+dotenv.config({ silent: process.env.NODE_ENV === 'production' });
 
 // Setup Minswap API
 const api = new BlockfrostAdapter({
