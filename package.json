@@ -5,5 +5,8 @@
     "@minswap/sdk": "^0.2.2-beta",
     "dotenv": "^16.3.1",
     "googleapis": "^127.0.0"
+  },
+  "bin" : {
+    "execute" : "index.js"
   }
 }
