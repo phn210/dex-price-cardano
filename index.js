@@ -2,11 +2,12 @@ import { BlockFrostAPI } from "@blockfrost/blockfrost-js";
 import { BlockfrostAdapter } from "@minswap/sdk";
 import { google } from 'googleapis';
 import credentials from './secrets/golden-record-401410-fcfd88cbb372.json' assert { type: 'json' };
+import "dotenv/config.js";
 
 // Setup Minswap API
 const api = new BlockfrostAdapter({
   blockFrost: new BlockFrostAPI({
-    projectId: "mainnetFOwvFxnRIlaq0s2YjGaPUWJFUIw88fzU",
+    projectId: process.env.BLOCKFROST_PROJECT_ID,
     network: "mainnet",
   }),
 });
@@ -19,8 +20,8 @@ const auth = new google.auth.JWT({
 });
 
 // Define the spreadsheet ID and range to update
-const spreadsheetId = '1GBT-KW6qz7psQrjJr1f384ec-FjvYXqBSZriad1VsJI';
-const sheetName = 'Holding';
+const spreadsheetId = process.env.SHEET_ID;
+const sheetName = process.env.SHEET_NAME;
 const lengthRange = sheetName + '!A1';
 let dataRange = sheetName + '!B3:C';
 let priceRange = sheetName + '!D3:D';
@@ -80,12 +81,12 @@ while (tmp.length > 0) {
   );
   if (minADAPool) {
     const [a, b] = await api.getPoolPrice({ pool: minADAPool });
-    console.log(
-      `ADA/... price: ${a.toString()}; .../ADA price: ${b.toString()}`
-    );
-    // we can later use this ID to call getPoolById
-    console.log(`... pool ID: ${minADAPool.id}`);
-    console.log('Asset:', minADAPool.assetB);
+    // console.log(
+    //   `ADA/... price: ${a.toString()}; .../ADA price: ${b.toString()}`
+    // );
+    // // we can later use this ID to call getPoolById
+    // console.log(`... pool ID: ${minADAPool.id}`);
+    // console.log('Asset:', minADAPool.assetB);
     tokenPrices[index] = a;
   } else tokenPrices[index] = 'NOT_FOUNDED';
   index++;
@@ -96,7 +97,7 @@ console.log(tokenPrices)
 
 // Define the data to update
 const requestData = {
-  values: tokenPrices.map(e => e == 'NOT_FOUNDED' ? e : [e.toPrecision(4)]),
+  values: tokenPrices.map(e => e == 'NOT_FOUNDED' ? e : [e.toPrecision(4).toString().replace('.', ',')]),
 };
 
 // Use the Google Sheets API to update the data
@@ -104,7 +105,7 @@ sheets.spreadsheets.values.update({
   auth: auth,
   spreadsheetId: spreadsheetId,
   range: priceRange,
-  valueInputOption: 'RAW',
+  valueInputOption: 'USER_ENTERED',
   resource: requestData,
 }, (err, response) => {
   if (err) {
